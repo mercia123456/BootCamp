@@ -5,6 +5,7 @@ import com.relevantcodes.extentreports.LogStatus;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -107,7 +108,11 @@ public class CommonAPI {
         } else if (platform.equalsIgnoreCase("windows") && browser.equalsIgnoreCase("chrome")) {
             System.setProperty("webdriver.chrome.driver", "../Generic/src/main/resources/drivers/chromedriver.exe");
         }
-        driver = new ChromeDriver();
+        //Chrome popup
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("disable-infobars");
+        driver = new ChromeDriver(options);
+
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
         driver.manage().window().maximize();
@@ -152,7 +157,7 @@ public class CommonAPI {
 
     public static List<WebElement> getListOfWebElementsByCss(String locator) {
         List<WebElement> list = new ArrayList<WebElement>();
-        list = driver.findElements(By.cssSelector(locator));
+        list = driver.findElements(By.xpath(locator));
         return list;
     }
 
