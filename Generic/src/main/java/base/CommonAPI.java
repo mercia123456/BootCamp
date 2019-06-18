@@ -34,17 +34,21 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class CommonAPI {
+
+    //Declaring parameter variable for cloud driver
     public static final String BROWSERSTACK_USERNAME = "";
     public static final String BROWSERSTACK_AUTOMATE_KEY = "";
     public static final String SAUCE_USERNAME = "";
     public static final String SAUCE_AUTOMATE_KEY = "";
     public static final String BROWSERSTACK_URL = "https://" + BROWSERSTACK_USERNAME + ":" + BROWSERSTACK_AUTOMATE_KEY + "@hub-cloud.browserstack.com/wd/hub";
     public static final String SAUCE_URL = "https://" + SAUCE_USERNAME + ":" + SAUCE_AUTOMATE_KEY + "@ondemand.saucelabs.com:80/wd/hub";
+
+    //initialize the driver
     public static WebDriver driver = null;
     //Extent Report Setup
     public static ExtentReports extent;
 
-    //screenshot
+    // For taking screenshot
     public static void captureScreenshot(WebDriver driver, String screenshotName) {
 
         DateFormat df = new SimpleDateFormat("(MM.dd.yyyy-HH:mma)");
@@ -61,9 +65,10 @@ public class CommonAPI {
         }
 
     }
-
+     //initialization parameter
     @Parameters({"platform", "url", "browser", "cloud", "browserVersion", "envName"})
     @BeforeMethod
+    //setting up the setupdriver for runningthe test case on either local or cloud driver as you want it.
     public static WebDriver setupDriver(String platform, String url, @Optional("chrome") String browser, @Optional("false") boolean cloud, String browserVersion, String envName) throws MalformedURLException {
         if (cloud) {
             driver = getCloudDriver(browser, browserVersion, platform, envName);
@@ -73,7 +78,7 @@ public class CommonAPI {
         driver.get(url);
         return driver;
     }
-
+     //setup cloud driver for running test on cloud browser
     public static WebDriver getCloudDriver(String browser, String browserVersion, String platform, String envName) throws MalformedURLException {
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -102,13 +107,17 @@ public class CommonAPI {
      * @return WebDriver webdriver instance for the driver
      * @Author - peoplenTech
      */
+
+    //setup local driver for running the test case on local browsers
     public static WebDriver getLocalDriver(String browser, String platform) {
         if (platform.equalsIgnoreCase("mac") && browser.equalsIgnoreCase("chrome")) {
             System.setProperty("webdriver.chrome.driver", "../Generic/src/main/resources/drivers/chromedriver");
         } else if (platform.equalsIgnoreCase("windows") && browser.equalsIgnoreCase("chrome")) {
-            System.setProperty("webdriver.chrome.driver", "../Generic/src/main/resources/drivers/chromedriver.exe");
+            System.setProperty("webdriver.gecko.driver", "../Generic/src/main/resources/drivers/geckodriver");
         }
         //Chrome popup
+
+        //setting the chrome driver and explicitly and implicitly wait time and maximizing webpage frame size
         ChromeOptions options = new ChromeOptions();
         options.addArguments("disable-infobars");
         driver = new ChromeDriver(options);
@@ -125,6 +134,7 @@ public class CommonAPI {
      * @param driver The webdriver instance
      * @Author - peoplenTech
      */
+    //screen shot method for taking screen shot and the driver is a instance of webdriver
     public static void getScreenshot(WebDriver driver) {
         DateFormat df = new SimpleDateFormat("(MM.dd.yyyy-HH:mma)");
         Date date = new Date();
@@ -142,6 +152,7 @@ public class CommonAPI {
         //splitString = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(st), ' ');
         return splitString;
     }
+    //for getting the text from the test case using this method
 
     public static List<String> getTextFromWebElements(String locator) {
         List<WebElement> element = new ArrayList<WebElement>();
@@ -175,12 +186,12 @@ public class CommonAPI {
         driver1.switchTo().window(newTabs.get(0));
         return driver1;
     }
-
+    //handling any pop up on the current page you working on
     public static boolean isPopUpWindowDisplayed(WebDriver driver1, String locator) {
         boolean value = driver1.findElement(By.cssSelector(locator)).isDisplayed();
         return value;
     }
-
+    //method for doing test case on web element using any kind of locators locators
     public static void typeOnElementNEnter(String locator, String value) {
         try {
             driver.findElement(By.cssSelector(locator)).sendKeys(value, Keys.ENTER);
@@ -221,6 +232,7 @@ public class CommonAPI {
 
     //****************************
 
+    // for getting report of each test
     @BeforeSuite
     public void extentSetup(ITestContext context) {
         ExtentManager.setOutputDirectory(context);
@@ -275,6 +287,8 @@ public class CommonAPI {
         extent.close();
     }
 
+    //for closing the browser after each test
+
     @AfterMethod
     public void quitDriver() {
         driver.close();
@@ -298,6 +312,7 @@ public class CommonAPI {
         driver.findElement(By.cssSelector(locator)).click();
     }
 
+    //this method will click on element by css xpath or id locators.
     public void clickOnElement(String locator) {
         try {
             driver.findElement(By.cssSelector(locator)).click();
@@ -309,7 +324,7 @@ public class CommonAPI {
             }
         }
     }
-
+    //this method type on input field by cssselector and id locator.
     public void typeOnInputField(String locator, String value) {
         try {
             driver.findElement(By.cssSelector(locator)).sendKeys(value);
@@ -318,66 +333,75 @@ public class CommonAPI {
         }
 
     }
-
+     //this method for click on element by xpath
     public void clickByXpath(String locator) {
         driver.findElement(By.xpath(locator)).click();
     }
 
+   //this method for type on element using css selector
     public void typeByCss(String locator, String value) {
         driver.findElement(By.cssSelector(locator)).sendKeys(value);
     }
 
+    //this method will enter the key after its being type on input by css selector
     public void typeByCssNEnter(String locator, String value) {
         driver.findElement(By.cssSelector(locator)).sendKeys(value, Keys.ENTER);
     }
-
+    //this method for type on element using xpath locator
     public void typeByXpath(String locator, String value) {
         driver.findElement(By.xpath(locator)).sendKeys(value);
     }
 
+    //this method will enter the key after its being type on input by css selector
     public void takeEnterKeys(String locator) {
         driver.findElement(By.cssSelector(locator)).sendKeys(Keys.ENTER);
     }
 
+    //this method will clear the input field
     public void clearInputField(String locator) {
         driver.findElement(By.cssSelector(locator)).clear();
     }
+
+    //this method will get the text from element  using id
 
     public List<WebElement> getListOfWebElementsById(String locator) {
         List<WebElement> list = new ArrayList<WebElement>();
         list = driver.findElements(By.id(locator));
         return list;
     }
+    //this method will get the text from element  using xpath
 
     public List<WebElement> getListOfWebElementsByXpath(String locator) {
         List<WebElement> list = new ArrayList<WebElement>();
         list = driver.findElements(By.xpath(locator));
         return list;
     }
-
+    //this method will get the current page url
     public String getCurrentPageUrl() {
         String url = driver.getCurrentUrl();
         return url;
     }
-
+    //for navigating the driver to forward
     public void navigateForward() {
         driver.navigate().forward();
     }
 
+    //this method will get the test from element using css selector
     public String getTextByCss(String locator) {
         String st = driver.findElement(By.cssSelector(locator)).getText();
         return st;
     }
-
+    //this method will get the text from element using xpath locator
     public String getTextByXpath(String locator) {
         String st = driver.findElement(By.xpath(locator)).getText();
         return st;
     }
-
+    //this method will get the text from element using id
     public String getTextById(String locator) {
         return driver.findElement(By.id(locator)).getText();
     }
 
+    //this method will get the text from element using name
     public String getTextByName(String locator) {
         String st = driver.findElement(By.name(locator)).getText();
         return st;
@@ -515,7 +539,7 @@ public class CommonAPI {
             }
         }
     }
-
+//
     public void clearField(String locator) {
         driver.findElement(By.id(locator)).clear();
     }
@@ -541,4 +565,6 @@ public class CommonAPI {
             System.out.println("CSS locator didn't work");
         }
     }
+
+
 }

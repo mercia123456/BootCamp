@@ -11,6 +11,11 @@
     <modules>
         <module>Generic</module>
         <module>SeleniumExercise</module>
+        <module>Amazon</module>
+        <module>Facebook</module>
+        <module>cnn</module>
+        <module>Cigna</module>
+        <module>Citibank</module>
     </modules>
 
     <dependencyManagement>
